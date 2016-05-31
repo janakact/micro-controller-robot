@@ -53,13 +53,13 @@ void loop() {
   {
     String s = wifiSerial.readStringUntil('\n');
     s = extract(s);
+    Serial.println(s);
     process(s);
   }
   if (Serial.available())
   {
     String s = Serial.readStringUntil('\n');
     process(s);
-    
     wifiSerial.println(s);
   }
   
