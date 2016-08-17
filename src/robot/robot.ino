@@ -5,15 +5,22 @@ AltSoftSerial wifiSerial; // RX, TX 8,9
 
 //Eranga
 bool safe = true;
-
+char lastCommand = 'p';
+long duration, distance;
+#define trigPin 13
+#define echoPin 12
 
 //Setup and Loop --------------------------------------------------------------------------------------------
 unsigned long lastTime;
 void setup() {
 
+  Serial.begin(9600);
+ 
   setupMotors();
 //  forward(255);
 
+  //Eranga
+  setupSonar();
   //Set the time
   lastTime = millis();
   
@@ -23,7 +30,6 @@ void setup() {
   
   digitalWrite(13, HIGH);
   wifiSerial.begin(9600);
-  Serial.begin(9600);
   delay(500);
   digitalWrite(13, LOW);
   
@@ -81,8 +87,7 @@ void loop() {
   }
 
   //Eranga
-
-  
+  setFlag();
 }
 
 void blk(int count)
@@ -147,10 +152,14 @@ void process(String s)
   if(s=="") return;
   for(int i=0; i<s.length(); i++)
   {
+    lastCommand = s[i];
     if(s[i] == 'f')
       forward(255);
       
-    if(s[i] == 'b')
+    if(s[i] == 'b' && safe)
+      backward(255);
+
+    if(s[i] == 'B')
       backward(255);
     
     if(s[i] == 's')
@@ -229,4 +238,29 @@ void right(unsigned int spd)
   setMotor(1,spd,false);
 }
 
+//Eranga
+void setFlag(){
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2)/29.1;
+  if(distance < 20){
+    safe=false;
+    if(lastCommand=='b')
+      stopMotors();
+    
+  }else{
+    safe=true;
+  }
+  //Serial.println(safe);
+}
+
+void setupSonar(){
+  //Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
 
