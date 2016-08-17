@@ -1,12 +1,18 @@
-#include <SoftwareSerial.h>
 #include "AltSoftSerial.h"
 
 //Wifi device -----------------------------
 AltSoftSerial wifiSerial; // RX, TX 8,9
 
+//Eranga
+bool safe = true;
+
+
 //Setup and Loop --------------------------------------------------------------------------------------------
 unsigned long lastTime;
 void setup() {
+
+  setupMotors();
+//  forward(255);
 
   //Set the time
   lastTime = millis();
@@ -31,19 +37,23 @@ void setup() {
   //connect
   Serial.println("Me:Tring to connect");
   //Connect to hostpot
-  sendToWifi("AT+CWJAP=\"jana\",\"856856856\"",8000);
+  sendToWifi("AT+CWJAP=\"HTC_D626q\",\"rangerqwe\"");
+
+  delay(6000);
+ // Serial.println("Enabling Multi Channel");
   //Enable multi channel
   sendToWifi("AT+CIPMUX=1");
   //Get IP
-  //sendToWifi("AT+CIFSR");
+ // Serial.println("Getting IP");
+  sendToWifi("AT+CIFSR");
   //Start server
+
+  
+ // Serial.println("Starting Serverss");
   sendToWifi("AT+CIPSERVER=1,1336");
 
   setupMotors();
-  blk(5);
-  
-
- 
+  blk(5); 
 }
 
 //-----------------------------------------------------------------------------------Loop
@@ -52,16 +62,26 @@ void loop() {
   if (wifiSerial.available())
   {
     String s = wifiSerial.readStringUntil('\n');
-    s = extract(s);
-    Serial.println(s);
-    process(s);
+    String extracted  = extract(s);
+    if(extracted=="")
+      Serial.println(s);
+    else
+    {
+      Serial.print("Original:"+s+" | ");
+      Serial.println("Extracted:"+extracted);
+    }
+    process(extracted);
   }
   if (Serial.available())
   {
     String s = Serial.readStringUntil('\n');
     process(s);
     wifiSerial.println(s);
+    Serial.println(s);
   }
+
+  //Eranga
+
   
 }
 
@@ -81,19 +101,23 @@ void blk(int count)
 
 void sendToWifi(String str)
 {
-  sendToWifi(str,3000);
+  sendToWifi(str,2000);
 }
 
 void sendToWifi(String str, int t)
 {
-  blk(1);
-  wifiSerial.println(str);
   delay(t);
   while(wifiSerial.available())
   {
     Serial.println(wifiSerial.readStringUntil('\n'));
   }
+  wifiSerial.println(str);
   blk(2);
+  delay(t);
+  while(wifiSerial.available())
+  {
+    Serial.println(wifiSerial.readStringUntil('\n'));
+  }
 }
 
 void sendToClient(String str, int chn)
