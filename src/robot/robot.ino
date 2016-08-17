@@ -10,6 +10,8 @@ long duration, distance;
 #define trigPin 13
 #define echoPin 12
 
+int speedValue = 255;
+
 //Setup and Loop --------------------------------------------------------------------------------------------
 unsigned long lastTime;
 void setup() {
@@ -154,23 +156,37 @@ void process(String s)
   {
     lastCommand = s[i];
     if(s[i] == 'f')
-      forward(255);
+      forward(speedValue);
       
-    if(s[i] == 'b' && safe)
-      backward(255);
+    else if(s[i] == 'b' && safe)
+      backward(speedValue);
 
-    if(s[i] == 'B')
-      backward(255);
+    else if(s[i] == 'B')
+      backward(speedValue);
     
-    if(s[i] == 's')
+    else if(s[i] == 's')
       stopMotors();
     
-    if(s[i] == 'l')
-      left(255);
+    else if(s[i] == 'l')
+      left(speedValue);
     
-    if(s[i] == 'r')
-      right(255);
+    else if(s[i] == 'r')
+      right(speedValue);
+
+    else if(s[i]=='1')
+      speedValue = 100;
+
+    else if(s[i]=='2')
+      speedValue = 140;    
       
+    else if(s[i]=='3')
+      speedValue = 180;
+      
+    else if(s[i]=='4')
+      speedValue = 220;
+            
+    else if(s[i]=='5')
+      speedValue = 255;
   }
 }
 
@@ -216,14 +232,14 @@ void stopMotors()
 // Other functions
 void forward(unsigned int spd)
 {
-  setMotor(0,spd,true);
-  setMotor(1,spd,true);
+  setMotor(1,spd,false);
+  setMotor(0,spd,false);
 }
 
 void backward(unsigned int spd)
 {
-  setMotor(0,spd,false);
-  setMotor(1,spd,false);
+  setMotor(1,spd,true);
+  setMotor(0,spd,true);
 }
 
 void left(unsigned int spd)
