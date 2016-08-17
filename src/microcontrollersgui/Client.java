@@ -17,13 +17,13 @@ import java.util.logging.Logger;
  */
 public class Client {
     
-//    private final String forward = "f\n\r";
-//    private final String backward = "b";
-//    private final String stop = "s";
-//    private final String left = "l";
-//    private final String right = "r";
-//    private String lastMessage;
-//    private boolean status;
+    private final String forward = "f\n\r";
+    private final String backward = "b";
+    private final String stop = "s";
+    private final String left = "l";
+    private final String right = "r";
+    private String lastMessage;
+    private boolean status;
     
     private Socket clientSocket;
     private DataOutputStream outToServer;
@@ -32,8 +32,8 @@ public class Client {
     private final int port;
     
     public Client(String ipaddress, int portaddress) {
-//        lastMessage = "released";
-//        status = true;
+        lastMessage = "released";
+        status = true;
         this.ip = ipaddress;
         this.port = portaddress;
         connectToServer();
@@ -67,48 +67,48 @@ public class Client {
         }
     }
     
-    public void move(char input) {
+    public String move(char input) {
         String msg;
         switch (input) {
             case 'w':
             case 'W':
-               send("f\n\r");
-//                msg = "move forward";
+                status = send(this.forward);
+                msg = "move forward";
                 break;
             case 's':
             case 'S':
-                send("b");
-//                msg = "move backward";
+                status = send(this.backward);
+                msg = "move backward";
                 break;
             case 'a':
             case 'A':
-                send("l");
-//                msg = "turn left";
+                status = send(this.left);
+                msg = "turn left";
                 break;
             case 'd':
             case 'D':
-                 send( "r");
-//                msg = "turn right";
+                status = send(this.right);
+                msg = "turn right";
                 break;
             default:
-//                msg = "incorrect key";
+                msg = "incorrect key";
                 break;
         }
-//        if (!status) {
-//            msg = "something went wrong";
-////            return msg;
-//        }
-//        if (!lastMessage.equals("released")) {
-////            return ("null");
-//        } else {
-//            lastMessage = msg;
-////            return msg;
-//        }
+        if (!status) {
+            msg = "something went wrong";
+            return msg;
+        }
+        if (!lastMessage.equals("released")) {
+            return ("null");
+        } else {
+            lastMessage = msg;
+            return msg;
+        }
     }
     
     public void stop() {
-        boolean stat = send("s");
-//        lastMessage = "released";
+        boolean stat = send(stop);
+        lastMessage = "released";
     }
     
     public void closeConnection() {

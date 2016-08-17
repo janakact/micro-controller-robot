@@ -190,11 +190,10 @@ public class CommandGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        client.move(evt.getKeyChar());
-        //String status=client.move(evt.getKeyChar());
-       // if(!status.equals("null")){
-       //     messageBox.append(status+"\n");
-       // }
+        String status=client.move(evt.getKeyChar());
+        if(!status.equals("null")){
+            messageBox.append(status+"\n");
+        }
     }//GEN-LAST:event_formKeyPressed
 
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
